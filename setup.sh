@@ -59,9 +59,9 @@ cd ..
 # install iPXE
 sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y build-essential binutils-dev zlib1g-dev libiberty-dev liblzma-dev
 git clone git://git.ipxe.org/ipxe.git --depth=1
-cd ipxe/
+cd ipxe/src
 make bin-x86_64-pcbios/ipxe.usb
-cd ../
+cd ../../
 
 # install rust
 #(curl -sSf https://static.rust-lang.org/rustup.sh | sh) || return 0
@@ -70,13 +70,13 @@ cd ../
 
 # setup bridge initialize script
 sudo sed -i -e 's/exit 0//g' /etc/rc.local
-sudo sh -c 'echo "ifconfig eth0 down" >> /etc/rc.local'
-sudo sh -c 'echo "ifconfig eth0 up" >> /etc/rc.local'
-sudo sh -c 'echo "ip addr flush dev eth0" >> /etc/rc.local'
+sudo sh -c 'echo "ifconfig enp0s3 down" >> /etc/rc.local'
+sudo sh -c 'echo "ifconfig enp0s3 up" >> /etc/rc.local'
+sudo sh -c 'echo "ip addr flush dev enp0s3" >> /etc/rc.local'
 sudo sh -c 'echo "brctl addbr br0" >> /etc/rc.local'
 sudo sh -c 'echo "brctl stp br0 off" >> /etc/rc.local'
 sudo sh -c 'echo "brctl setfd br0 0" >> /etc/rc.local'
-sudo sh -c 'echo "brctl addif br0 eth0" >> /etc/rc.local'
+sudo sh -c 'echo "brctl addif br0 enp0s3" >> /etc/rc.local'
 sudo sh -c 'echo "ifconfig br0 up" >> /etc/rc.local'
 sudo sh -c 'echo "dhclient br0" >> /etc/rc.local'
 sudo sh -c 'echo "exit 0" >> /etc/rc.local'
