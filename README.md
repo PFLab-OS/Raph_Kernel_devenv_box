@@ -7,6 +7,6 @@ In most cases, it is good to use an image to which this script has already been 
 
 ## How to use
 ```
-$ git clone https://github.com/PFLab-OS/Raph_Kernel_devenv_box.git
-$ bash -x ./Raph_Kernel_devenv_box/setup.sh
+$ wget https://raw.githubusercontent.com/PFLab-OS/Raph_Kernel_devenv_box/master/setup.sh
+$ bash -x ./setup.sh
 ```

@@ -3,10 +3,10 @@
 sudo sed -i'~' -E "s@http://(..\.)?(archive|security)\.ubuntu\.com/ubuntu@http://linux.yz.yamagata-u.ac.jp/pub/linux/ubuntu-archive/@g" /etc/apt/sources.list
 
 
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq update
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y gdebi git g++ make autoconf bison flex parted emacs language-pack-ja-base language-pack-ja kpartx gdb bridge-utils libyaml-dev silversearcher-ag ccache doxygen graphviz
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -y grub-efi
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y gdisk dosfstools
+sudo apt update
+sudo apt install -y gdebi git g++ make autoconf bison flex parted emacs language-pack-ja-base language-pack-ja kpartx gdb bridge-utils libyaml-dev silversearcher-ag ccache doxygen graphviz
+sudo apt install -y grub-efi
+sudo apt install -y gdisk dosfstools
 sudo update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
 
 echo 'export USE_CCACHE=1' >> ~/.bashrc
@@ -14,7 +14,7 @@ echo 'export CCACHE_DIR=~/.ccache' >> ~/.bashrc
 echo 'export PATH="/usr/lib/ccache:$PATH"' >> ~/.bashrc
 
 # install qemu
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev
+sudo apt install -y libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev
 wget http://download.qemu-project.org/qemu-2.9.0.tar.xz
 tar xvJf qemu-2.9.0.tar.xz
 mkdir build-qemu
@@ -25,7 +25,7 @@ sudo make install
 cd ..
 
 # install OVMF
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y build-essential uuid-dev nasm iasl
+sudo apt install -y build-essential uuid-dev nasm iasl
 git clone -b UDK2017 http://github.com/tianocore/edk2 --depth=1
 cd edk2
 make -C BaseTools
@@ -46,7 +46,7 @@ sudo make install
 cd ..
 
 # install grub
-#sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y libdevmapper-dev
+#sudo apt install -y libdevmapper-dev
 #wget http://alpha.gnu.org/gnu/grub/grub-2.02~beta3.tar.gz
 #tar zxvf grub-2.02~beta3.tar.gz
 #cd grub-2.02~beta3
@@ -57,10 +57,10 @@ cd ..
 #cd ..
 
 # install iPXE
-sudo DEBIAN_FRONTEND=noninteractive apt-get -qq install -y build-essential binutils-dev zlib1g-dev libiberty-dev liblzma-dev
+sudo apt install -y build-essential binutils-dev zlib1g-dev libiberty-dev liblzma-dev
 git clone git://git.ipxe.org/ipxe.git --depth=1
 cd ipxe/src
-make bin-x86_64-pcbios/ipxe.usb
+# make bin-x86_64-pcbios/ipxe.usb
 cd ../../
 
 # install rust
@@ -87,5 +87,21 @@ sudo sh -c 'echo "allow br0" > /usr/local/etc/qemu/bridge.conf'
 
 sudo mkdir "/mnt/Raph_Kernel"
 sudo mkdir "/mnt/efi"
+
+sudo apt install -y build-essential kernel-package libssl-dev linux-headers-$(uname -r)
+apt source -y linux-source-4.4.0
+# sudo apt build-dep linux-source-$(uname -r)
+cd linux-4.4.0/
+make oldconfig
+make prepare
+make scripts
+cp -v /usr/src/linux-headers-$(uname -r)/Module.symvers .
+cd drivers/uio/
+make -C /lib/modules/$(uname -r)/build M=$(pwd) modules
+sudo make -C /lib/modules/$(uname -r)/build M=$(pwd) modules_install
+sudo depmod
+sudo modprobe uio
+sudo modprobe uio_pci_generic
+cd ../../../
 
 echo "setup done!"
