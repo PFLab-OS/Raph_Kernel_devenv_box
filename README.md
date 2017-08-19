@@ -7,6 +7,8 @@ In most cases, it is good to use an image to which this script has already been 
 
 ## How to use
 ```
-$ wget https://raw.githubusercontent.com/PFLab-OS/Raph_Kernel_devenv_box/master/setup.sh
-$ bash -x ./setup.sh
+$ vagrant up
+$ vagrant ssh
+(vagrant) $ cd /vagrant
+(vagrant) $ bash -x ./setup.sh
 ```
