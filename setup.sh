@@ -58,7 +58,7 @@ cd ..
 
 # install iPXE
 sudo apt install -y build-essential binutils-dev zlib1g-dev libiberty-dev liblzma-dev
-git clone git://git.ipxe.org/ipxe.git --depth=1
+git clone http://git.ipxe.org/ipxe.git --depth=1
 cd ipxe/src
 # make bin-x86_64-pcbios/ipxe.usb
 cd ../../
