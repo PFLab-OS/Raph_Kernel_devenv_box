@@ -26,7 +26,7 @@ cd ..
 
 # install OVMF
 sudo apt install -y build-essential uuid-dev nasm iasl
-git clone -b UDK2017 http://github.com/tianocore/edk2 --depth=1
+git clone -b UDK2017 https://github.com/tianocore/edk2 --depth=1
 cd edk2
 make -C BaseTools
 . ./edksetup.sh
@@ -103,5 +103,7 @@ sudo depmod
 sudo modprobe uio
 sudo modprobe uio_pci_generic
 cd ../../../
+
+sudo sh -c 'date > /etc/bootstrapped'
 
 echo "setup done!"
