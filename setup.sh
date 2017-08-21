@@ -1,11 +1,12 @@
 #!/bin/bash
 
+sudo su -c "grep '^deb ' /etc/apt/sources.list | sed 's/^deb/deb-src/g' > /etc/apt/sources.list.d/deb-src.list"
 sudo sed -i'~' -E "s@http://(..\.)?(archive|security)\.ubuntu\.com/ubuntu@http://linux.yz.yamagata-u.ac.jp/pub/linux/ubuntu-archive/@g" /etc/apt/sources.list
 cd $HOME
 
-sudo apt update
+sudo apt update -y
 sudo apt install -y gdebi git g++ make autoconf bison flex parted emacs language-pack-ja-base language-pack-ja kpartx gdb bridge-utils libyaml-dev silversearcher-ag ccache doxygen graphviz
-sudo apt install -y grub-efi
+# sudo apt install -y grub-efi
 sudo apt install -y gdisk dosfstools
 sudo update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
 
@@ -30,9 +31,9 @@ git clone -b UDK2017 https://github.com/tianocore/edk2 --depth=1
 cd edk2
 make -C BaseTools
 . ./edksetup.sh
-build -a X64 -t GCC48 -p OvmfPkg/OvmfPkgX64.dsc
+build -a X64 -t GCC5 -p OvmfPkg/OvmfPkgX64.dsc
 mkdir ~/edk2-UDK2017
-cp Build/OvmfX64/DEBUG_GCC48/FV/*.fd ~/edk2-UDK2017
+cp Build/OvmfX64/DEBUG_GCC5/FV/*.fd ~/edk2-UDK2017
 cd ..
 
 # make & install musl with CFLAGS="-fpie -fPIE"
@@ -46,15 +47,19 @@ sudo make install
 cd ..
 
 # install grub
-#sudo apt install -y libdevmapper-dev
-#wget http://alpha.gnu.org/gnu/grub/grub-2.02~beta3.tar.gz
-#tar zxvf grub-2.02~beta3.tar.gz
-#cd grub-2.02~beta3
-#./autogen.sh
-#./configure
-#make
-#sudo make install
-#cd ..
+sudo apt install -y libdevmapper-dev
+wget http://alpha.gnu.org/gnu/grub/grub-2.02~beta3.tar.gz
+tar zxvf grub-2.02~beta3.tar.gz
+cd grub-2.02~beta3
+./autogen.sh
+./configure --target=i386 --with-platform=pc
+make
+sudo make install
+make clean
+./configure --target=x86_64 --with-platform=efi
+make
+sudo make install
+cd ..
 
 # install iPXE
 sudo apt install -y build-essential binutils-dev zlib1g-dev libiberty-dev liblzma-dev
