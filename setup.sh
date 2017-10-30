@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 sudo su -c "grep '^deb ' /etc/apt/sources.list | sed 's/^deb/deb-src/g' > /etc/apt/sources.list.d/deb-src.list"
 sudo sed -i'~' -E "s@http://(..\.)?(archive|security)\.ubuntu\.com/ubuntu@http://linux.yz.yamagata-u.ac.jp/pub/linux/ubuntu-archive/@g" /etc/apt/sources.list
@@ -109,6 +109,15 @@ sudo modprobe uio
 sudo modprobe uio_pci_generic
 cd ../../../
 
+
+sudo sed -i -e 's/timeout=30/timeout=3/g' /boot/grub/grub.cfg
+
 sudo sh -c 'date > /etc/bootstrapped'
+
+
+# clean up
+sudo rm /var/log/*
+dd if=/dev/zero of=zero bs=4k || :
+rm zero
 
 echo "setup done!"

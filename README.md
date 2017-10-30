@@ -10,5 +10,5 @@ In most cases, it is good to use an image to which this script has already been 
 $ vagrant up
 $ vagrant ssh
 (vagrant) $ cd /vagrant
-(vagrant) $ bash -x ./setup.sh
+(vagrant) $ ./setup.sh
 ```
