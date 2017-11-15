@@ -5,7 +5,7 @@ sudo sed -i'~' -E "s@http://(..\.)?(archive|security)\.ubuntu\.com/ubuntu@http:/
 cd $HOME
 
 sudo apt update -y
-sudo apt install -y gdebi git g++ make autoconf bison flex parted emacs language-pack-ja-base language-pack-ja kpartx gdb bridge-utils libyaml-dev silversearcher-ag ccache doxygen graphviz
+sudo apt install -y git g++ make autoconf bison flex parted emacs language-pack-ja-base language-pack-ja kpartx gdb bridge-utils libyaml-dev silversearcher-ag ccache doxygen graphviz
 # sudo apt install -y grub-efi
 sudo apt install -y gdisk dosfstools
 sudo update-locale LANG=ja_JP.UTF-8 LANGUAGE="ja_JP:ja"
@@ -24,6 +24,7 @@ cd build-qemu
 make -j2
 sudo make install
 cd ..
+rm -rf qemu-2.9.0.tar.xz qemu-2.9.0 build-qemu
 
 # install OVMF
 sudo apt install -y build-essential uuid-dev nasm iasl
@@ -35,6 +36,7 @@ build -a X64 -t GCC5 -p OvmfPkg/OvmfPkgX64.dsc
 mkdir ~/edk2-UDK2017
 cp Build/OvmfX64/DEBUG_GCC5/FV/*.fd ~/edk2-UDK2017
 cd ..
+rm -rf edk2
 
 # make & install musl with CFLAGS="-fpie -fPIE"
 git clone -b v0.9.15 git://git.musl-libc.org/musl --depth=1
@@ -45,6 +47,7 @@ unset CFLAGS
 make -j2
 sudo make install
 cd ..
+rm -rf musl
 
 # install grub
 sudo apt install -y libdevmapper-dev
@@ -60,6 +63,7 @@ make clean
 make
 sudo make install
 cd ..
+rm -rf grub-2.02~beta3.tar.gz grub-2.02~beta3
 
 # install iPXE
 sudo apt install -y build-essential binutils-dev zlib1g-dev libiberty-dev liblzma-dev
@@ -93,23 +97,6 @@ sudo sh -c 'echo "allow br0" > /usr/local/etc/qemu/bridge.conf'
 sudo mkdir "/mnt/Raph_Kernel"
 sudo mkdir "/mnt/efi"
 
-sudo apt install -y build-essential kernel-package libssl-dev linux-headers-$(uname -r)
-apt source -y linux-source-4.4.0
-# sudo apt build-dep linux-source-$(uname -r)
-cd linux-4.4.0/
-make oldconfig
-make prepare
-make scripts
-cp -v /usr/src/linux-headers-$(uname -r)/Module.symvers .
-cd drivers/uio/
-make -C /lib/modules/$(uname -r)/build M=$(pwd) modules
-sudo make -C /lib/modules/$(uname -r)/build M=$(pwd) modules_install
-sudo depmod
-sudo modprobe uio
-sudo modprobe uio_pci_generic
-cd ../../../
-
-
 sudo sed -i -e 's/timeout=30/timeout=3/g' /boot/grub/grub.cfg
 
 sudo sh -c 'date > /etc/bootstrapped'
@@ -117,7 +104,7 @@ sudo sh -c 'date > /etc/bootstrapped'
 
 # clean up
 sudo rm /var/log/*
-dd if=/dev/zero of=zero bs=4k || :
-rm zero
+dd if=/dev/zero of=/tmp/zero bs=4k || :
+rm /tmp/zero
 
 echo "setup done!"
